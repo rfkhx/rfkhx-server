@@ -29,4 +29,5 @@ public class AppBinary {
     private String filename;
     private String description;
     private String md5;
+    private Long size;
 }

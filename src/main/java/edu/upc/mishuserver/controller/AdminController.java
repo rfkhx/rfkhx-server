@@ -93,7 +93,7 @@ public class AdminController {
         // fileName.substring(fileName.lastIndexOf(".")+1));
         // return new Result(0,"图片上传成功！","/file/down/" + fileName);
         AppBinary appBinary = AppBinary.builder().description(description).platform(platform).versioncode(versionCode)
-                .versionname(versionName).filename(fileName).md5(sb.toString()).build();
+                .versionname(versionName).filename(fileName).md5(sb.toString()).size(file.getSize()).build();
         appBinaryRepository.save(appBinary);
         return "redirect:publish";
     }

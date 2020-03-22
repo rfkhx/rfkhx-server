@@ -13,12 +13,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.connector.ClientAbortException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import edu.upc.mishuserver.dto.AppBinary;
+import edu.upc.mishuserver.repositories.AppBinaryRepository;
 import edu.upc.mishuserver.utils.StringConfigUtil;
+import edu.upc.mishuserver.vo.UpdateInfo;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -28,8 +33,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ReleaseController {
 
+	@Autowired
+	private AppBinaryRepository appBinaryRepository;
+
 	@RequestMapping(value = "/down/{platform}/{filename}")
-	public void downloadFile(@PathVariable(value = "filename", required = true) String f_name,@PathVariable(value = "platform", required = true) String platform, HttpServletRequest request,
+	public void downloadFile(@PathVariable(value = "filename", required = true) String f_name,
+			@PathVariable(value = "platform", required = true) String platform, HttpServletRequest request,
 			HttpServletResponse response, @RequestHeader(required = false) String range)
 			throws UnsupportedEncodingException {
 		String upPath = StringConfigUtil.getConfig("uppath");
@@ -39,7 +48,7 @@ public class ReleaseController {
 		Matcher matcher = pattern.matcher(f_name);
 
 		if (matcher.matches()) {
-			log.warn("IP为{}的用户尝试下载文件{}被拒绝。", request.getRemoteAddr(),f_name);
+			log.warn("IP为{}的用户尝试下载文件{}被拒绝。", request.getRemoteAddr(), f_name);
 			return;
 		}
 		// 文件目录
@@ -140,10 +149,10 @@ public class ReleaseController {
 			System.out.println("用户停止下载：" + startByte + "-" + endByte + "：" + transmitted);
 			// 捕获此异常表示拥护停止下载
 		} catch (IOException e) {
-			log.error("用户请求下载文件{}时遇到读写异常{}", f_name,e.toString());
+			log.error("用户请求下载文件{}时遇到读写异常{}", f_name, e.toString());
 		} catch (InterruptedException e) {
 			// e.printStackTrace();
-			log.error("用户请求下载文件{}被中断：{}", f_name,e.toString());
+			log.error("用户请求下载文件{}被中断：{}", f_name, e.toString());
 		} finally {
 			try {
 				if (randomAccessFile != null) {
@@ -151,9 +160,28 @@ public class ReleaseController {
 				}
 			} catch (IOException e) {
 				// e.printStackTrace();
-				log.debug("关闭随机文件{}失败：{}", f_name,e.toString());
+				log.debug("关闭随机文件{}失败：{}", f_name, e.toString());
 			}
 		}
 	}
-    
+
+	@RequestMapping("/update/{platform}")
+	@ResponseBody
+	UpdateInfo getUpdateInfo(HttpServletRequest request,@PathVariable String platform) {
+
+		StringBuffer url = request.getRequestURL();  
+		String tempContextUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append("/").toString();  
+	
+		AppBinary appBinary = appBinaryRepository.findFirstByPlatformOrderByVersioncodeDesc(platform);
+		UpdateInfo updateInfo;
+		if (appBinary == null) {
+			updateInfo = UpdateInfo.builder().Code(1L).Msg("没有找到该系统的发布版本！").build();
+		} else {
+			updateInfo = UpdateInfo.builder().Code(0L).UpdateStatus(1).VersionCode(appBinary.getVersioncode())
+					.VersionName(appBinary.getVersionname()).ModifyContent(appBinary.getDescription())
+					.DownloadUrl(tempContextUrl+"down/" + appBinary.getPlatform() + "/" + appBinary.getFilename())
+					.ApkSize(appBinary.getSize() / 1024).ApkMd5(appBinary.getMd5()).build();
+		}
+		return updateInfo;
+	}
 }

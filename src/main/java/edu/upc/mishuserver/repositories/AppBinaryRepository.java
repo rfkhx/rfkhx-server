@@ -9,5 +9,5 @@ import edu.upc.mishuserver.dto.AppBinary;
  */
 public interface AppBinaryRepository extends JpaRepository<AppBinary,Long> {
 
-    AppBinary findFirstByPlatformOrderByVersioncode(String platform);
+    AppBinary findFirstByPlatformOrderByVersioncodeDesc(String platform);
 }
