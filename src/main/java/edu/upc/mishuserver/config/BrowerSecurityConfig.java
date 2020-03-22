@@ -27,13 +27,14 @@ public class BrowerSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().permitAll().and()
-        .formLogin()
-                ;
+        http.authorizeRequests()
+        // .antMatchers("/admin", "/admin/**").authenticated()
+        .anyRequest().permitAll().and()
+                .formLogin();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    // @Bean
+    // public PasswordEncoder passwordEncoder() {
+    // return new BCryptPasswordEncoder();
+    // }
 }

@@ -8,6 +8,5 @@ import edu.upc.mishuserver.dto.StringSetting;
  * StringSettingRepositoriy
  */
 public interface StringSettingRepositoriy extends JpaRepository<StringSetting,Long>{
-
-    
+    StringSetting findByItem(String item);
 }
