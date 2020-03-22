@@ -11,19 +11,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * StringSetting
+ * AppBinary
  */
-@Data
 @Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StringSetting {
+public class AppBinary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    private String item;
-    private String value;
+    private Long versioncode;
+    private String versionname;
+    private String platform;
+    private String filename;
+    private String description;
+    private String md5;
 }

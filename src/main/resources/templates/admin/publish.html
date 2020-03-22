@@ -1,0 +1,53 @@
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>版本发布</title>
+</head>
+
+<body>
+    <h1>版本发布</h1>
+    <h2>现有</h2>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>VersionCode</th>
+            <th>VersionName</th>
+            <th>Platform</th>
+            <th>Link</th>
+            <th>MD5</th>
+            <th>Description</th>
+            <th>Operation</th>
+        </tr>
+        <tr th:each="i:${binaries}">
+            <td th:text="${i.id}">0</td>
+            <td th:text="${i.versioncode}">1</td>
+            <td th:text="${i.versionname}">v1.0</td>
+            <td th:text="${i.platform}">某平台</td>
+            <td><a th:href="@{/down/{platform}/{filename}(platform=${i.platform},filename=${i.filename})}" th:text="${i.filename}"></a></td>
+            <th th:text="${i.md5}">MD5</th>
+            <td th:text="${i.description}">描述</td>
+            <td><a th:href="@{deleteVersionHandler(id=${i.id})}">删除</a></td>
+        </tr>
+    </table>
+    <h2>添加</h2>
+    <form th:action="@{publishHandler}" method="POST" enctype="multipart/form-data">
+        <div><label for="versionCode">VersionCode</label><input type="text" name="versionCode" id="versionCode"></div>
+        <div><label for="versionName">VersionName</label><input type="text" name="versionName" id="versionName"></div>
+        <div>
+            <label for="platform">平台</label>
+            <select name="platform" id="platform">
+                <option value="Win64">Windows 64bit</option>
+                <option value="Linux64">Linux 64bit</option>
+                <option value="Android">Android</option>
+            </select>
+        </div>
+        <div><label for="file">文件上传</label><input type="file" name="file" id="file"></div>
+        <div><label for="description">描述</label><textarea name="description" id="description" cols="30"
+                rows="10"></textarea></div>
+        <button type="submit">提交</button>
+    </form>
+</body>
+
+</html>
