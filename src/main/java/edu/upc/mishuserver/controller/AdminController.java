@@ -36,13 +36,15 @@ public class AdminController {
     String systemManagePage(Model model) {
         model.addAttribute("beian", StringConfigUtil.getConfig("beian", "备案信息配置丢失！"));
         model.addAttribute("uppath", StringConfigUtil.getConfig("uppath", "/tmp/"));
+        model.addAttribute("url", StringConfigUtil.getConfig("url", "http://loaclhost/"));
         return "admin/system";
     }
 
     @RequestMapping("systemHandler")
-    String systemManageHandler(@RequestParam String beian, @RequestParam String uppath) {
+    String systemManageHandler(@RequestParam String beian, @RequestParam String uppath,@RequestParam String url) {
         StringConfigUtil.writeConfig("beian", beian);
         StringConfigUtil.writeConfig("uppath", uppath);
+        StringConfigUtil.writeConfig("url", url);
         return "redirect:system";
     }
 
