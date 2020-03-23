@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import edu.upc.mishuserver.dto.AppBinary;
@@ -167,7 +168,7 @@ public class ReleaseController {
 
 	@RequestMapping("/update/{platform}")
 	@ResponseBody
-	UpdateInfo getUpdateInfo(HttpServletRequest request,@PathVariable String platform) {
+	UpdateInfo getUpdateInfo(HttpServletRequest request,@PathVariable String platform,@RequestParam(required = false) Long versionCode,@RequestParam(required = false) String appKey) {
 
 	
 		AppBinary appBinary = appBinaryRepository.findFirstByPlatformOrderByVersioncodeDesc(platform);
@@ -175,7 +176,7 @@ public class ReleaseController {
 		if (appBinary == null) {
 			updateInfo = UpdateInfo.builder().code(1L).msg("没有找到该系统的发布版本！").build();
 		} else {
-			updateInfo = UpdateInfo.builder().code(0L).updateStatus(1).versionCode(appBinary.getVersioncode())
+			updateInfo = UpdateInfo.builder().code(0L).updateStatus((versionCode==null||versionCode<appBinary.getVersioncode())?1:0).versionCode(appBinary.getVersioncode())
 					.versionName(appBinary.getVersionname()).modifyContent(appBinary.getDescription())
 					.downloadUrl(StringConfigUtil.getConfig("url", "http://loaclhost")+"/down/" + appBinary.getPlatform() + "/" + appBinary.getFilename())
 					.apkSize(appBinary.getSize() / 1024).apkMd5(appBinary.getMd5()).build();
