@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import edu.upc.mishuserver.dto.AppBinary;
@@ -167,20 +168,18 @@ public class ReleaseController {
 
 	@RequestMapping("/update/{platform}")
 	@ResponseBody
-	UpdateInfo getUpdateInfo(HttpServletRequest request,@PathVariable String platform) {
+	UpdateInfo getUpdateInfo(HttpServletRequest request,@PathVariable String platform,@RequestParam(required = false) Long versionCode,@RequestParam(required = false) String appKey) {
 
-		StringBuffer url = request.getRequestURL();  
-		String tempContextUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append("/").toString();  
 	
 		AppBinary appBinary = appBinaryRepository.findFirstByPlatformOrderByVersioncodeDesc(platform);
 		UpdateInfo updateInfo;
 		if (appBinary == null) {
-			updateInfo = UpdateInfo.builder().Code(1L).Msg("没有找到该系统的发布版本！").build();
+			updateInfo = UpdateInfo.builder().code(1L).msg("没有找到该系统的发布版本！").build();
 		} else {
-			updateInfo = UpdateInfo.builder().Code(0L).UpdateStatus(1).VersionCode(appBinary.getVersioncode())
-					.VersionName(appBinary.getVersionname()).ModifyContent(appBinary.getDescription())
-					.DownloadUrl(tempContextUrl+"down/" + appBinary.getPlatform() + "/" + appBinary.getFilename())
-					.ApkSize(appBinary.getSize() / 1024).ApkMd5(appBinary.getMd5()).build();
+			updateInfo = UpdateInfo.builder().code(0L).updateStatus((versionCode==null||versionCode<appBinary.getVersioncode())?1:0).versionCode(appBinary.getVersioncode())
+					.versionName(appBinary.getVersionname()).modifyContent(appBinary.getDescription())
+					.downloadUrl(StringConfigUtil.getConfig("url", "http://loaclhost")+"/down/" + appBinary.getPlatform() + "/" + appBinary.getFilename())
+					.apkSize(appBinary.getSize() / 1024).apkMd5(appBinary.getMd5()).build();
 		}
 		return updateInfo;
 	}

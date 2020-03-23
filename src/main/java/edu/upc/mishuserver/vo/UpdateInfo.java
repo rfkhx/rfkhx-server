@@ -1,5 +1,7 @@
 package edu.upc.mishuserver.vo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,13 +16,22 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UpdateInfo {
 
-    private Long Code;
-    private String Msg;
-    private Integer UpdateStatus;
-    private Long VersionCode;
-    private String VersionName;
-    private String ModifyContent;
-    private String DownloadUrl;
-    private Long ApkSize;
-    private String ApkMd5;
+    @JSONField(name="Code")
+    private Long code;
+    @JSONField(name = "Msg")
+    private String msg;
+    @JSONField(name = "UpdateStatus")
+    private Integer updateStatus;
+    @JSONField(name = "VersionCode")
+    private Long versionCode;
+    @JSONField(name = "VersionName")
+    private String versionName;
+    @JSONField(name = "ModifyContent")
+    private String modifyContent;
+    @JSONField(name = "DownloadUrl")
+    private String downloadUrl;
+    @JSONField(name = "ApkSize")
+    private Long apkSize;
+    @JSONField(name = "ApkMd5")
+    private String apkMd5;
 }
