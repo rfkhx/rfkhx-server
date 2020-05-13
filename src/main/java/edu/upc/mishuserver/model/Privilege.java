@@ -1,29 +1,35 @@
-package edu.upc.mishuserver.dto;
+package edu.upc.mishuserver.model;
+
+import java.util.Collection;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * StringSetting
- */
-@Data
 @Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StringSetting {
+public class Privilege {
+  
+    public Privilege(String name2) {
+        this.name=name2;
+	}
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    private String item;
-    private String value;
+ 
+    private String name;
+ 
+    @ManyToMany(mappedBy = "privileges")
+    private Collection<Role> roles;
 }

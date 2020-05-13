@@ -1,4 +1,4 @@
-package edu.upc.mishuserver.dto;
+package edu.upc.mishuserver.model;
 
 import java.util.Collection;
 
@@ -20,22 +20,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Role {
+public class User {
   
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
  
-    private String name;
-    @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
+    private String email;
+    private String password;
+    private boolean enabled;
+    // private boolean tokenExpired;
  
     @ManyToMany
-    @JoinTable(
-        name = "roles_privileges", 
+    @JoinTable( 
+        name = "users_roles", 
         joinColumns = @JoinColumn(
-          name = "role_id", referencedColumnName = "id"), 
+          name = "user_id", referencedColumnName = "id"), 
         inverseJoinColumns = @JoinColumn(
-          name = "privilege_id", referencedColumnName = "id"))
-    private Collection<Privilege> privileges;   
+          name = "role_id", referencedColumnName = "id")) 
+    private Collection<Role> roles;
 }

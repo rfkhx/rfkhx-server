@@ -1,4 +1,4 @@
-package edu.upc.mishuserver.dto;
+package edu.upc.mishuserver.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -7,7 +7,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import edu.upc.mishuserver.dto.StringSetting;
+import edu.upc.mishuserver.model.StringSetting;
 import edu.upc.mishuserver.repositories.StringSettingRepositoriy;
 import lombok.extern.slf4j.Slf4j;
 

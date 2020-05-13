@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import edu.upc.mishuserver.dto.AppBinary;
+import edu.upc.mishuserver.model.AppBinary;
 import edu.upc.mishuserver.repositories.AppBinaryRepository;
 import edu.upc.mishuserver.utils.StringConfigUtil;
 import lombok.extern.slf4j.Slf4j;

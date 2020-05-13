@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import edu.upc.mishuserver.dto.AppBinary;
+import edu.upc.mishuserver.model.AppBinary;
 import edu.upc.mishuserver.repositories.AppBinaryRepository;
 import edu.upc.mishuserver.utils.StringConfigUtil;
 

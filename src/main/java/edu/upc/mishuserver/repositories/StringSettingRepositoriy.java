@@ -2,7 +2,7 @@ package edu.upc.mishuserver.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import edu.upc.mishuserver.dto.StringSetting;
+import edu.upc.mishuserver.model.StringSetting;
 
 /**
  * StringSettingRepositoriy
