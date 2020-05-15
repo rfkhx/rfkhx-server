@@ -6,9 +6,10 @@
 </head>
 <body>
     <h1>注册</h1>
-    <form action="@{user/signupHandle}">
+    <form th:action="@{signupHandle}">
         <input type="text" name="email" placeholder="E-mail"><br>
         <input type="text" name="password" placeholder="password"><br>
+        <input type="hidden" name="role" value="ROLE_USER">
         <button type="submit">提交</button>
     </form>
 </body>
