@@ -25,12 +25,17 @@ import lombok.extern.slf4j.Slf4j;
  * AdminController
  */
 @Controller
-@RequestMapping("admin/")
+@RequestMapping("admin")
 @Slf4j
 public class AdminController {
 
     @Autowired
     private AppBinaryRepository appBinaryRepository;
+
+    @RequestMapping("")
+    String index(){
+        return "admin/index";
+    }
 
     @RequestMapping("system")
     String systemManagePage(Model model) {

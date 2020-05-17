@@ -1,53 +1,107 @@
 <html lang="zh-Hans">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>版本发布</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Main CSS-->
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <!-- Font-icon css-->
+    <link rel="stylesheet" type="text/css"
+        href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Essential javascripts for application to work-->
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/main.js"></script>
+    <!-- The javascript plugin to display page loading on top-->
+    <script src="../js/plugins/pace.min.js"></script>
+    <!-- Page specific javascripts-->
+    <script>
+        $(document).ready(function () {
+            $("#li_publish").addClass("active");
+        });
+    </script>
 </head>
 
-<body>
-    <h1>版本发布</h1>
-    <h2>现有</h2>
-    <table border="1">
-        <tr>
-            <th>id</th>
-            <th>VersionCode</th>
-            <th>VersionName</th>
-            <th>Platform</th>
-            <th>Link</th>
-            <th>MD5</th>
-            <th>Description</th>
-            <th>Operation</th>
-        </tr>
-        <tr th:each="i:${binaries}">
-            <td th:text="${i.id}">0</td>
-            <td th:text="${i.versioncode}">1</td>
-            <td th:text="${i.versionname}">v1.0</td>
-            <td th:text="${i.platform}">某平台</td>
-            <td><a th:href="@{/down/{platform}/{filename}(platform=${i.platform},filename=${i.filename})}" th:text="${i.filename}"></a></td>
-            <th th:text="${i.md5}">MD5</th>
-            <td th:text="${i.description}">描述</td>
-            <td><a th:href="@{deleteVersionHandler(id=${i.id})}">删除</a></td>
-        </tr>
-    </table>
-    <h2>添加</h2>
-    <form th:action="@{publishHandler}" method="POST" enctype="multipart/form-data">
-        <div><label for="versionCode">VersionCode</label><input type="text" name="versionCode" id="versionCode"></div>
-        <div><label for="versionName">VersionName</label><input type="text" name="versionName" id="versionName"></div>
-        <div>
-            <label for="platform">平台</label>
-            <select name="platform" id="platform">
-                <option value="Win64">Windows 64bit</option>
-                <option value="Linux64">Linux 64bit</option>
-                <option value="Android">Android</option>
-            </select>
+<body class="app sidebar-mini">
+    <header th:replace="common/admin/nav.html"></header>
+    <aside th:replace="common/admin/side.html"></aside>
+
+    <main class="app-content">
+        <div class="app-title">
+            <div>
+                <h1><i class="fa fa-dashboard"></i> Publish</h1>
+                <p>产品的发布控制</p>
+            </div>
         </div>
-        <div><label for="file">文件上传</label><input type="file" name="file" id="file"></div>
-        <div><label for="description">描述</label><textarea name="description" id="description" cols="30"
-                rows="10"></textarea></div>
-        <button type="submit">提交</button>
-    </form>
+        <div class="tile">
+            <h1 class="tile-titile">版本发布</h1>
+            <h2>现有</h2>
+            <table class="table">
+                <tr>
+                    <th>id</th>
+                    <th>VersionCode</th>
+                    <th>VersionName</th>
+                    <th>Platform</th>
+                    <th>Link</th>
+                    <th>MD5</th>
+                    <th>Description</th>
+                    <th>Operation</th>
+                </tr>
+                <tr th:each="i:${binaries}">
+                    <td th:text="${i.id}">0</td>
+                    <td th:text="${i.versioncode}">1</td>
+                    <td th:text="${i.versionname}">v1.0</td>
+                    <td th:text="${i.platform}">某平台</td>
+                    <td><a th:href="@{/down/{platform}/{filename}(platform=${i.platform},filename=${i.filename})}"
+                            th:text="${i.filename}"></a></td>
+                    <th th:text="${i.md5}">MD5</th>
+                    <td th:text="${i.description}">描述</td>
+                    <td><a th:href="@{deleteVersionHandler(id=${i.id})}">删除</a></td>
+                </tr>
+            </table>
+            <h2>添加</h2>
+            <form class="form-horizontal" th:action="@{publishHandler}" method="POST" enctype="multipart/form-data">
+                <div class="form-group row">
+                    <label for="versionCode" class="control-label col-md-3">VersionCode</label>
+                    <div class="col-md-8">
+                        <input type="text" name="versionCode" id="versionCode" class="form-control col-md-8">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="versionName" class="control-label col-md-3">VersionName</label>
+                    <div class="col-md-8">
+                        <input type="text" name="versionName" id="versionName" class="form-control col-md-8">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="platform" class="control-label col-md-3">平台</label>
+                    <div class="col-md-8">
+                        <select name="platform" id="platform" class="form-control col-md-8">
+                            <option value="Win64">Windows 64bit</option>
+                            <option value="Linux64">Linux 64bit</option>
+                            <option value="Android">Android</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="file" class="control-label col-md-3">文件上传</label>
+                    <div class="col-md-8">
+                        <input type="file" name="file" id="file" class="form-control col-md-8">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="description" class="control-label col-md-3">描述</label>
+                    <div class="col-md-8">
+                        <textarea name="description" id="description" cols="30" rows="10" class="form-control col-md-8"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">提交</button>
+            </form>
+        </div>
+    </main>
 </body>
 
 </html>
