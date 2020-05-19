@@ -34,9 +34,10 @@ public class BrowerSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().rememberMe().tokenRepository(persistentTokenRepository()) // 配置 token 持久化仓库
                 .tokenValiditySeconds(3600 * 24 * 7) // remember 过期时间，单为秒
                 .userDetailsService(userDetailService) // 处理自动登录逻辑
-                .and().authorizeRequests().antMatchers("/admin", "/admin/**")// 后台页面需要登陆
-                .authenticated().anyRequest().permitAll()//其他页面允许访问
-                ;
+                .and().authorizeRequests()// 请求的验证
+                .antMatchers("/admin", "/admin/**").hasAuthority("MANAGE_PRIVILEGE")// 后台页面需要管理员
+                .anyRequest().permitAll()// 其他页面允许访问
+        ;
     }
 
     @Bean

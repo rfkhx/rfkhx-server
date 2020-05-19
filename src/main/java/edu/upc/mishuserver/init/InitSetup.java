@@ -58,12 +58,11 @@ public class InitSetup implements ApplicationRunner {
      */
     private void perVersion() {
         log.info("版本检查不通过，执行初始化操作。");
-        Privilege readPrivilege = userService.createPrivilegeIfNotFound("READ_PRIVILEGE");
-        Privilege writePrivilege = userService.createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+        Privilege browsePrivilege = userService.createPrivilegeIfNotFound("BROWSE_PRIVILEGE");
+        Privilege adminPrivilege = userService.createPrivilegeIfNotFound("MANAGE_PRIVILEGE");
 
-        List<Privilege> adminPrivileges = Arrays.asList(readPrivilege, writePrivilege);
+        List<Privilege> adminPrivileges = Arrays.asList(browsePrivilege, adminPrivilege);
         userService.createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        userService.createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
 
         Role adminRole = roleRepository.findByName("ROLE_ADMIN");
         User user = new User();
