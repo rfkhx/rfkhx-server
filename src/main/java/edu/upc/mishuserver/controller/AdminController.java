@@ -4,22 +4,32 @@ import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import edu.upc.mishuserver.model.AppBinary;
+import edu.upc.mishuserver.model.Role;
+import edu.upc.mishuserver.model.User;
 import edu.upc.mishuserver.repositories.AppBinaryRepository;
+import edu.upc.mishuserver.repositories.RoleRepository;
+import edu.upc.mishuserver.repositories.UserRepository;
 import edu.upc.mishuserver.utils.StringConfigUtil;
 import lombok.extern.slf4j.Slf4j;
+import java.security.Principal;
 
 /**
  * AdminController
@@ -28,12 +38,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("admin")
 @Slf4j
 public class AdminController {
-
     @Autowired
     private AppBinaryRepository appBinaryRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @RequestMapping("")
-    String index(){
+    String index() {
         return "admin/index";
     }
 
@@ -46,7 +59,7 @@ public class AdminController {
     }
 
     @RequestMapping("systemHandler")
-    String systemManageHandler(@RequestParam String beian, @RequestParam String uppath,@RequestParam String url) {
+    String systemManageHandler(@RequestParam String beian, @RequestParam String uppath, @RequestParam String url) {
         StringConfigUtil.writeConfig("beian", beian);
         StringConfigUtil.writeConfig("uppath", uppath);
         StringConfigUtil.writeConfig("url", url);
@@ -117,5 +130,72 @@ public class AdminController {
             appBinaryRepository.delete(appBinary);
         }
         return "redirect:publish";
+    }
+
+    @RequestMapping("user")
+    String userManagement(Model model, Principal principal,
+            @PageableDefault(value = 10, sort = { "id" }) Pageable pageable) {
+        model.addAttribute("name", principal.getName());
+        model.addAttribute("users", userRepository.findAll(pageable));
+        model.addAttribute("roles", roleRepository.findAll());
+        Page<User> user = userRepository.findAll(pageable);
+        user.previousOrFirstPageable();
+        return "admin/usermanagement";
+    }
+
+    @PostMapping("delUserHandle")
+    String delUserHandle(@RequestParam Long uid, Principal principal) {
+        Optional<User> user = userRepository.findById(uid);
+        if (!user.isEmpty() ) {
+            if (principal.getName().equals(user.get().getEmail())) {
+                // 不能操作自己的角色
+                ;
+            } else {
+                userRepository.delete(user.get());
+            }
+        }
+        return "redirect:user";
+    }
+
+    @PostMapping("addRoleHandle")
+    String addRoleHandle(@RequestParam Long uid, @RequestParam Long rid, Principal principal) {
+        Optional<User> user = userRepository.findById(uid);
+        Optional<Role> role = roleRepository.findById(rid);
+        if (!user.isEmpty() && !role.isEmpty()) {
+            if (principal.getName().equals(user.get().getEmail())) {
+                // 不能操作自己的角色
+                ;
+            } else {
+                User opUser = user.get();
+                Role opRole = role.get();
+                if (!opUser.getRoles().contains(opRole)) {
+                    opUser.getRoles().add(opRole);
+                    userRepository.save(opUser);
+                }
+            }
+        }
+        return "redirect:user";
+    }
+
+    @PostMapping("delRoleHandle")
+    String delRoleHandle(@RequestParam Long uid, @RequestParam Long rid, Principal principal) {
+        Optional<User> user = userRepository.findById(uid);
+        Optional<Role> role = roleRepository.findById(rid);
+        if (!user.isEmpty() && !role.isEmpty()) {
+            if (principal.getName().equals(user.get().getEmail())) {
+                // 不能操作自己的角色
+                ;
+            } else {
+                User opUser = user.get();
+                Role opRole = role.get();
+                log.debug("当前操作用户{}，删除角色{}", opUser.getEmail(), opRole.getName());
+                if (opUser.getRoles().contains(opRole)) {
+                    opUser.getRoles().remove(opRole);
+                    opRole.getUsers().remove(opUser);
+                    userRepository.save(opUser);
+                }
+            }
+        }
+        return "redirect:user";
     }
 }

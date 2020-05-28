@@ -1,0 +1,89 @@
+<html lang="zh-Hans">
+
+<head>
+    <title>用户管理</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Main CSS-->
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <!-- Font-icon css-->
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <!-- Essential javascripts for application to work-->
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/main.js"></script>
+    <!-- The javascript plugin to display page loading on top-->
+    <script src="../js/plugins/pace.min.js"></script>
+    <!-- Page specific javascripts-->
+    <script>
+        $(document).ready(function () {
+            $("#li_usermanagement").addClass("active");
+        });
+    </script>
+</head>
+
+<body class="app sidebar-mini">
+    <header th:replace="common/admin/nav.html"></header>
+    <aside th:replace="common/admin/side.html"></aside>
+    <main class="app-content">
+        <div class="app-title">
+            <div>
+                <h1><i class="fa fa-users"></i> 用户管理</h1>
+                <p>管理用户及用户权限</p>
+            </div>
+        </div>
+        <div class="alert alert-dismissible alert-warning" th:if="${name=='test@test.com'}">
+            <button class="close" type="button" data-dismiss="alert">×</button>
+            <h4>Warning!</h4>
+            <p >您当前使用的是系统测试帐号，这很不安全，请您立即设置一个管理员并停用当前帐号！</p>
+        </div>
+        <div class="tile">
+            <h1 class="tile-title">用户管理</h1>
+            <table border="1px">
+                <tr>
+                    <th>id</th>
+                    <th>邮箱</th>
+                    <th>状态</th>
+                    <th>角色</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:each="i:${users.getContent()}">
+                    <td th:text="${i.id}">1</td>
+                    <td th:text="${i.email}">邮箱</td>
+                    <td th:text="${i.enabled?'正常':'冻结'}">正常</td>
+                    <td>
+                        <div th:each="j:${i.roles}">
+                            <form th:action="@{delRoleHandle}" method="post">
+                                <span th:text="${j.name}">ROLE_ADMIN</span>
+                                <input type="hidden" name="uid" th:value="${i.id}">
+                                <input type="hidden" name="rid" th:value="${j.id}">
+                                <button type="submit">删除</button>
+                            </form>
+                        </div>
+                        <form th:action="@{addRoleHandle}" method="POST">
+                            <input type="hidden" name="uid" th:value="${i.id}">
+                            <select name="rid">
+                                <option th:value="${k.id}" th:each="k:${roles}" th:text="${k.name}">ROLE_ADMIN</option>
+                            </select>
+                            <button type="submit">添加</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form th:action="@{delUserHandle}" method="POST">
+                            <input type="hidden" name="uid" th:value="${i.id}">
+                            <button type="submit">删除</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            <div class="pagelist">
+                <a th:href="@{user(page = ${users.previousOrFirstPageable().getPageNumber()})}">上一页</a>
+                <a th:href="@{user(page = ${users.nextOrLastPageable().getPageNumber()})}">下一页</a>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

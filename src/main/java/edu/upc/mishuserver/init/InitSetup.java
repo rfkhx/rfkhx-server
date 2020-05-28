@@ -65,10 +65,14 @@ public class InitSetup implements ApplicationRunner {
         userService.createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
 
         Role adminRole = roleRepository.findByName("ROLE_ADMIN");
-        User user = new User();
+        Role testRole = roleRepository.findByName("ROLE_TEST");
+        User user = userRepository.findByEmail("test@test.com");//不能再new，否则会存重了
+        if(user==null){
+            user=new User();
+        }
         user.setPassword(passwordEncoder.encode("test"));
         user.setEmail("test@test.com");
-        user.setRoles(Arrays.asList(adminRole));
+        user.setRoles(Arrays.asList(adminRole,testRole));
         user.setEnabled(true);
         userRepository.save(user);
     }
