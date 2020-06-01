@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private PrivilegeRepository privilegeRepository;
-    
+
     @Override
     public User registerNewUserAccount(UserDto accountDto) throws UserAlreadyExistException {
         if (emailExists(accountDto.getEmail())) {
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
         user.setEmail(accountDto.getEmail());
         // user.setUsing2FA(accountDto.isUsing2FA());
-        user.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
+        user.setRoles(Arrays.asList(createRoleIfNotFound("ROLE_USER",Arrays.asList(createPrivilegeIfNotFound("UPDATE_PRIVILEGE")))));
         user.setEnabled(true);
         return userRepository.save(user);
     }
