@@ -20,7 +20,10 @@ public class UserController {
 
     @RequestMapping("signupHandle")
     public String signupHandle(UserDto userDto) {
-        System.out.println(userDto);
+        // System.out.println(userDto);
+        if(!userDto.getPassword().equals(userDto.getMatchingPassword())){
+            return "redirect:./signup";
+        }
         userService.registerNewUserAccount(userDto);
         return "redirect:/login";
     }
